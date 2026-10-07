@@ -29,7 +29,8 @@ configFile.withReader {
 
 group = config.group_name
 version = config.mod_version
-archivesBaseName = "[${config.minecraft_version}]${config.mod_id}"
+// DBR: nombre de jar general, bspkrsCore-<version>.jar.
+archivesBaseName = config.mod_id
 
 minecraft {
     // DBR: la misma Forge del pack (el jar sigue declarando Forge@[10.13.2.1291,)).
@@ -59,11 +60,6 @@ processResources {
         exclude '**/*.info'
         exclude '**/*.properties'
     }
-}
-
-// change the name of my obfuscated jar
-jar {
-    appendix = config.appendix
 }
 
 // add a source jar
