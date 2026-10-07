@@ -1,3 +1,14 @@
+## Fork DBR (rama `dbr-1.7.10`)
+
+Fork de bspkrsCore 6.16 (commit `049699a` de la rama `1.7.10`) que se distribuye dentro del modpack
+Dragon Block Resurrection. Cambios respecto al original, version `6.16-dbr1`:
+
+- El version check corre en un hilo aparte y viene apagado por defecto (`allowUpdateCheck=false`):
+  `bspk.rs` ya no existe y el check bloqueaba la carga del juego hasta el timeout en cada arranque.
+- Build portado a ForgeGradle 1.2 de anatawa12 y Gradle 4.5 (el `1.2-SNAPSHOT` original ya no resuelve).
+
+Misma licencia que el original: CC BY-NC-SA 3.0, ver `src/main/resources/LICENSE`. Autor original: bspkrs.
+
 bspkrsCore
 =================
 bspkrs' bspkrsCore dependency mod for Minecraft.  Contains the set of shared classes used in all mods released by bspkrs.
