@@ -30,7 +30,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class bspkrsCoreMod
 {
     // config stuff
-    private final boolean       allowUpdateCheckDefault          = true;
+    // DBR: bspk.rs ya no existe; el check solo gastaba el timeout en cada arranque.
+    private final boolean       allowUpdateCheckDefault          = false;
     public boolean              allowUpdateCheck                 = allowUpdateCheckDefault;
     private final boolean       allowDebugOutputDefault          = false;
     public boolean              allowDebugOutput                 = allowDebugOutputDefault;
@@ -50,7 +51,8 @@ public class bspkrsCoreMod
     @SidedProxy(clientSide = Reference.PROXY_CLIENT, serverSide = Reference.PROXY_COMMON)
     public static CommonProxy   proxy;
 
-    protected ModVersionChecker versionChecker;
+    // DBR: volatile porque ahora lo asigna el hilo del version check.
+    protected volatile ModVersionChecker versionChecker;
     protected final String      versionURL                       = Const.VERSION_URL + "/Minecraft/" + Const.MCVERSION + "/bspkrsCore.version";
     protected final String      mcfTopic                         = "http://www.minecraftforum.net/topic/1114612-";
 
@@ -115,8 +117,22 @@ public class bspkrsCoreMod
     {
         if (allowUpdateCheck)
         {
-            versionChecker = new ModVersionChecker(Reference.MODID, metadata.version, versionURL, mcfTopic);
-            versionChecker.checkVersionWithLogging();
+            // DBR: el constructor de ModVersionChecker hace la peticion HTTP. En el hilo de
+            // carga bloqueaba Initialization hasta el timeout (y la resolucion DNS no tiene
+            // timeout). En segundo plano el aviso in-game sigue funcionando: BSCClientTicker
+            // ya tolera versionChecker == null y lo vuelve a mirar al entrar al mundo.
+            Thread t = new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    ModVersionChecker vc = new ModVersionChecker(Reference.MODID, metadata.version, versionURL, mcfTopic);
+                    vc.checkVersionWithLogging();
+                    versionChecker = vc;
+                }
+            }, "bspkrsCore version check");
+            t.setDaemon(true);
+            t.start();
         }
 
         if (event.getSide().isClient())

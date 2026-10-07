@@ -2,7 +2,7 @@ package bspkrs.util;
 
 import java.io.File;
 import java.net.URL;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.prefs.Preferences;
@@ -21,7 +21,7 @@ import com.google.common.collect.Ordering;
 
 public class ModVersionChecker
 {
-    private static final Map<String, ModVersionChecker> versionCheckerMap = new HashMap<String, ModVersionChecker>();
+    private static final Map<String, ModVersionChecker> versionCheckerMap = new ConcurrentHashMap<String, ModVersionChecker>();
     private URL                                         versionURL;
     private final String                                modID;
     private String                                      newVersion;

@@ -1,23 +1,21 @@
+// DBR: el ForgeGradle 1.2-SNAPSHOT original ya no resuelve (files.minecraftforge.net
+// murio). Mismo fork de anatawa12 y Gradle 4.5 que DbrServerPack.
 buildscript {
     repositories {
         mavenCentral()
-        maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
-        }
-        maven {
-            name = "sonatype"
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
-        }
+        maven { name = "forge"; url = "https://maven.minecraftforge.net" }
+        maven { name = "sonatype"; url = "https://oss.sonatype.org/content/repositories/snapshots/" }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath('com.anatawa12.forge:ForgeGradle:1.2-1.0.+') { changing = true }
     }
 }
 
 apply plugin: "forge"
 
 compileJava.options.encoding = 'UTF-8'
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
 
 // define the properties file
 ext.configFile = file "build.properties"
@@ -34,7 +32,8 @@ version = config.mod_version
 archivesBaseName = "[${config.minecraft_version}]${config.mod_id}"
 
 minecraft {
-    version = config.minecraft_version + "-" + config.forge_version // grab latest forge
+    // DBR: la misma Forge del pack (el jar sigue declarando Forge@[10.13.2.1291,)).
+    version = "1.7.10-10.13.4.1614-1.7.10"
     mappings = config.mappings_version
     assetDir = "run/assets"
     replace '@MOD_VERSION@', config.mod_version
